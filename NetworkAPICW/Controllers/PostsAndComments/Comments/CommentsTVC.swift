@@ -1,40 +1,33 @@
 //
-//  PostsTVC.swift
+//  CommentsTVC.swift
 //  NetworkAPICW
 //
-//  Created by Martynov Evgeny on 1.09.22.
+//  Created by Martynov Evgeny on 5.09.22.
 //
 
 import UIKit
 
-class PostsTVC: UITableViewController {
+class CommentsTVC: UITableViewController {
     
-    var user: User?
-    var posts: [Post] = []
+    var postId: Int?
+    var comments: [Comment] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        fetchPosts()
-        
-        
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        fetchComments()
     }
 
     // MARK: - Table view data source
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        posts.count
+        comments.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let post = posts[indexPath.row]
+        let comment = comments[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        cell.textLabel?.text = post.title
-        cell.detailTextLabel?.text = post.body
+        cell.textLabel?.text = comment.name
+        cell.detailTextLabel?.text = comment.body
         return cell
     }
 
@@ -83,18 +76,17 @@ class PostsTVC: UITableViewController {
     }
     */
     
-    func fetchPosts() {
+    func fetchComments() {
         
-        guard let userId = user?.id else { return }
-        let pathUrl = "\(ApiConstants.postsPath)?userId=\(userId)"
-
+        guard let postId = postId else { return }
+        let pathUrl = "\(ApiConstants.commentsPath)?postId=\(postId)"
         guard let url = URL(string: pathUrl) else { return }
 
         let task = URLSession.shared.dataTask(with: url) { (data, _, _) in
             guard let data = data else { return }
             do {
-                self.posts = try JSONDecoder().decode([Post].self, from: data)
-                print(self.posts)
+                self.comments = try JSONDecoder().decode([Comment].self, from: data)
+                print(self.comments)
             } catch let error {
                 print(error)
             }
@@ -104,5 +96,4 @@ class PostsTVC: UITableViewController {
         }
         task.resume()
     }
-
 }
